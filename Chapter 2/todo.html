@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<!-- ng-app attribute used apply the main angularJS method to the html -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="todoApp">
+<head>
+    <meta charset="utf-8" />
+    <title>TO DO List</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet" />
+    <script src="script/vendor/angular.min.js"></script>
+    <script>
+        // Data Model
+        var model = {
+            user: "Adam",
+            /*  items: [{ action: "Buy Flowers", done: false },
+            { action: "Get Shoes", done: false },
+            { action: "Collect Tickets", done: true },
+            { action: "Call Joe", done: false }] */
+        }; 
+
+        // Main Method 
+        // Use to create an array of all the other other modules that should be used. 
+        var todoApp = angular.module("todoApp", []);
+
+        // Data Model From JSON
+        // Run Method tell to use the service object that provides support for Ajax calls
+        // Using arguments to define which feature you require is part of an approach known as dependency injection
+        // $http service provides access to low-level Ajax requests
+        todoApp.run(function ($http) {
+            $http.get("data/todo.json").success(function (data) {
+                // Result from the get method is a promise. 
+                model.items = data;
+            });
+        });
+
+        // Filter 
+        todoApp.filter("checkedItems", function () {
+            // Filter factory which returns a function that is used to filter a set of data objects. 
+            return function (items, showComplete) {
+                var resultArr = [];
+                angular.forEach(items, function (item) {
+                    if (item.done == false || showComplete == true) {
+                        resultArr.push(item);
+                    }
+                });
+                return resultArr;
+            }
+        });
+
+        // Controller
+        // Controller defines the logic required to support a view
+        todoApp.controller("ToDoCtrl", function ($scope) {
+            // Calls the data model
+            $scope.todo = model;
+
+            //Defines a new data object
+            $scope.incompleteCount = function () {
+                var count = 0;
+                // Iterates over the array and counts objects that have property marked false
+                angular.forEach($scope.todo.items, function (item) {
+                    if (!item.done) { count++ }
+                });
+                return count;
+            }
+
+            // Defines new data object
+            // This is used to dynamically change the css class based on count
+            $scope.warningLevel = function () {
+                return $scope.incompleteCount(), 3 ? "label-success" : "label-warning";
+            }
+
+            // Modifies the Data Model
+            // Adds a new data object to the scope
+            $scope.addNewItem = function (actionText) {
+                // Defines properties in the object
+                $scope.todo.items.push({ action: actionText, done:false})
+            }
+        });
+    </script>
+</head>
+<!-- Attaches the Predefined Controller -->
+<body ng-controller="ToDoCtrl">
+    <div class="page-header">
+        <h1>
+            <!-- {{ data }} calls the data  -->
+            {{todo.user}}'s To Do List
+            <!-- ng-hide directive shows or hides the given element based on the expression -->
+            <!-- ng-class directive allows you to dynamically set css classes -->
+        <span class="label label-default" ng-class="warningLevel()" ng-hide="incompleteCount() == 0">{{incompleteCount()}}</span>
+        </h1>
+    </div>
+    <div class="panel">
+        <div class="input-group">
+            <!-- ng-model directive binds a form control to a scope property -->
+            <input class="form-control" ng-model="actionText" />
+            <span class="input-group-btn">
+                <!-- ng-click directive sets up a handler that evaluates the expression when the click event is triggered -->
+                <button class="btn btn-default" ng-click="addNewItem(actionText)">Add</button>
+            </span>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Done</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ng-repeat iterates over the properties of an object -->
+            <!-- | filter: {done:false} filters results hiding all objects where the done property is marked complete -->
+            <!-- orderBy: 'action' sorts objects alphabetically -->
+            <!-- | checkedItems: showComplete calls predefined custom filter -->
+            <tr ng-repeat="item in todo.items| checkedItems: showComplete | orderBy: 'action'">
+                <td>{{item.action}}</td>
+                <td><input type="checkbox" ng-model="item.done" /></td>
+                <td>{{item.done}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="checkbox-inline">
+        <label>
+            <input type="checkbox" ng-model="showComplete" /> Show Complete
+        </label>
+    </div>
+</body>
+</html>
