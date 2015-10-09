@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<!-- ng-app directive makes the functionality defined within the sportsStore module available within the HTML -->
+<html ng-app="sportsStore">
+<head>
+    <title>Sports Store</title>
+	<meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/Vendor/bootstrap.min.css" rel="stylesheet" />
+    <link href="style/Vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    
+    <script>
+        // Modules are the top-level building block in an angularJS application, and this method call creates a new module called sportsStore. 
+        // Normally would be stored in an external js file, could have been combined with module sportsStore.js but kept separate here for demo purposes
+        // ["customFilters"] is known as declaring a dependency.  Declaring the module makes it available so that the components can be referenced. This process is known as resolving the dependency. 
+        // The process of declaring and managing dependencies between modules and other kinds of components is known as dependency injection and is central to angularJS
+        angular.module("sportsStore", ["customFilter"]);
+    </script>
+    <script src="script/controllers/sportsStore.js"></script>
+    <script src="script/filters/customFilters.js"></script>
+    <script src="script/controllers/productListControllers.js"></script>
+</head>
+<!-- Applied to the body because it will be used to support the entire application -->
+<body ng-controller="sportsStoreCtrl">
+    <div class="navbar navbar-inverse">
+        <a class="navbar-brand" href="#">SPORTS STORE</a>
+    </div>
+    <!-- Placing this ng-controller directive within the scope of the sportsStoreCtrl controller they are able to have controller scope inheritance.  
+        This allows you to apply behaviors to a small section within the view. -->
+    <div class="panel panel-default row" ng-controller="productListCtrl">
+        <div class="col-xs-3">
+            <a ng-click="selectCategory()" class="btn btn-block btn-default btn-lg">Home</a>
+            <!-- | unique: 'category' is where we call the custom filter that we already made. -->
+            <!-- Our filter is set to generate a set of unique category names, enumerate each of them, assign the current value to a variable called item, and generate an a element for each value -->
+            <a ng-repeat="item in data.products | orderBy: 'category' | unique: 'category'" ng-click="selectCategory(item)" ng-class="getCategoryClass(item)" class="btn btn-block btn-default btn-lg">
+                {{item}}
+            </a>
+        </div>
+        <div class="col-xs-8">
+            <!-- ng-repeat generates elements for each object in the array data -->
+            <!-- | range: selectedPage:pageSize passes the data through the range filter to select the products for the current page.  
+                The details of the current page and the number of products per page are passes to the filter as arguments using the values defined on the controller scope -->
+            <div class="well" ng-repeat="item in data.products | filter:categoryFilterFn | range: selectedPage:pageSize">
+                <h3>
+                    <!-- {{ data binding expressions }} -->
+                    <strong>{{item.name}}</strong>
+                    <span class="pull-right label label-primary">
+                        <!-- | currency is a built in angular filter which turns the number into currency -->
+                        {{item.price | currency}}
+                    </span> 
+                </h3>
+                <span class="lead">{{item.description}}</span>
+            </div>
+            <!-- Adds buttons at the bottom of the page for navigation -->
+            <div class="pull-right btn-group">
+                <a ng-repeat="page in data.products | filter: categoryFilterFn | pageCount:pageSize" ng-click="selectPage($index + 1)" class="btn btn-default" ng-class="getPageClass($index + 1)">
+                {{$index + 1 }}
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
