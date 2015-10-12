@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<!-- ng-app directive makes the functionality defined within the sportsStore module available within the HTML -->
+<html ng-app="sportsStore">
+<head>
+    <title>Sports Store</title>
+	<meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/Vendor/bootstrap.min.css" rel="stylesheet" />
+    <link href="style/Vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    
+    <script>
+        // Modules are the top-level building block in an angularJS application, and this method call creates a new module called sportsStore. 
+        // Normally would be stored in an external js file, could have been combined with module sportsStore.js but kept separate here for demo purposes
+        // ["customFilters"] is known as declaring a dependency.  Declaring the module makes it available so that the components can be referenced. This process is known as resolving the dependency. 
+        // The process of declaring and managing dependencies between modules and other kinds of components is known as dependency injection and is central to angularJS
+        angular.module("sportsStore", ["customFilters", "cart", "ngRoute"])
+            
+        // The config method takes a function as its argument, which is executed when the module is loaded but before the application is executed, provided an opportunity for any one-off configuration tasks. 
+        .config(function ($routeProvider) {
+            // The function passed to the config method declares a dependency on a provider. 
+            // routeProvider is a provider object, whose name is a concatenation of the service and provider.  This service provides a URL routing for the application. 
+
+            $routeProvider.when("/complete", {
+                templateUrl: "/views/thankYou.html"
+            });
+
+            $routeProvider.when("/placeorder", {
+                templateUrl: "/views/placeOrder.html"
+            })
+
+            // Displays the checkoutSummary.html view
+            $routeProvider.when("/checkout", {
+                templateUrl: "/views/checkoutSummary.html"
+            });
+
+            // Displays the productList.html view
+            $routeProvider.when("/products", {
+                templateUrl: "/views/productList.html"
+            });
+
+            // Displays the productList.html view (because of the fallback route defined by the otherwise method)
+            $routeProvider.otherwise({
+                templateUrl: "/views/productList.html"
+            });
+
+        })
+    </script>
+    <script src="script/controllers/sportsStore.js"></script>
+    <script src="script/filters/customFilters.js"></script>
+    <script src="script/controllers/productListControllers.js"></script>
+    <script src="script/components/cart/cart.js"></script>
+    <script src="script/vendor/angular-route.min.js"></script>
+    <script src="script/controllers/checkoutControllers.js"></script>
+</head>
+<!-- Applied to the body because it will be used to support the entire application -->
+<body ng-controller="sportsStoreCtrl">
+    <div class="navbar navbar-inverse">
+        <a class="navbar-brand" href="#">SPORTS STORE</a>
+        <!-- Adds the cart partial view -->
+        <cart-summary />
+    </div>
+    <!-- displays error message -->
+    <div class="alert alert-danger" ng-show="data.error"> 
+        Error {{data.error.status}}.  The product data was not loaded. 
+        <a href="/app.html" class="alert-link">Click here to try again</a>
+    </div>
+    <!-- ng-view is where the route provider will place the specified content. -->
+    <ng-view />
+    <!-- ng-include adds the partial views -->
+    <!-- the file is specified as a literal value when both "" and '' are used to declare the file. 
+        not doing this would made the directive to look for a scope property to get the name of the file from. -->
+    <!-- <ng-include src="'views/productList.html'"></ng-include> -->
+</body>
+</html>
