@@ -1,0 +1,13 @@
+﻿<div class="panel panel-default row" ng-controller="mainCtrl">
+    <div class="col-xs-3 panel-body">
+        <!-- ng-repeat generates an element for each value in the scope screens array.  $index returns the position of the current item in the array.  
+            The index value is then used with the ng-click directive to invoke the setScreen controller -->
+        <a ng-repeat="item in screens" class="btn btn-block btn-default" ng-class="{'btn-primary' : item == current}" ng-click="setScreen($index)">
+            {{item}}
+        </a>
+    </div>
+    <div class="col-xs-8 panel-body">
+        <!-- ng-include directive displays a single partial view.  The current selected navigation value is mapped to one of the views.  -->
+        <div ng-include="getScreen()"></div>
+    </div>
+</div>

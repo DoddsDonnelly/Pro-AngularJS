@@ -7,8 +7,8 @@ Project assumes that you have gone through chapter one and installed all require
  
 This particular project also required Visual Studios be installed.  
  
-Each chapter is setup as its own website, simply right click the solution in visual studio and select properties.  Under startup project each chapter has an action property set the interested chapter to start.  Once setup that particular chapter should build and run.  
+Each chapter is setup as its own website, simply right click the solution in visual studio and select properties.  Under startup project each chapter has an action property set the interested chapter to start.  Once set that chapter will build and run.  
 
-Some chapters require an active database to be run as well.  In those cases Deloyed must be initiated.  From file explorer navigate to the project folder, as well as the particular chapter.  Under data double click the app.dpb icon to start the service.  
+Some chapters require an active database to be run as well.  In those cases Deloyed must be initiated.  From file explorer navigate to the project folder, as well as the chapter.  Under the data folder double click the app.dpb icon to start the service.  
 
 

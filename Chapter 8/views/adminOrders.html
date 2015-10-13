@@ -1,0 +1,40 @@
+﻿<div ng-controller="ordersCtrl">
+    <!-- First table displays the order summary along with a button to that invokes the selectOrder behavior to focus on the order -->
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Name</th>
+            <th>City</th>
+            <th>Vaule</th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="order in orders">
+            <td>{{order.name}}</td>
+            <td>{{order.city}}</td>
+            <td>{{calcTotal(order) | currency}}</td>
+            <td>
+                <button ng-click="selectOrder(order)" class="btn btn-xs btn-primary">
+                    Details
+                </button>
+            </td>
+        </tr>
+    </table>
+
+    <!-- The second table is visual only once an order has been selected and displays details of the product that have been ordered. -->
+    <div ng-show="selectedOrder">
+        <h3>Order Details</h3>
+
+        <table class="table table-striped table-bordered ">
+            <tr>
+                <th>Name</th>
+                <th>Count</th>
+                <th>Price</th>
+            </tr>
+            <tr ng-repeat="item in selectedOrder.products">
+                <td>{{item.name}}</td>
+                <td>{{item.count}}</td>
+                <td>{{item.price | currency}}</td>
+            </tr>
+        </table>
+    </div>
+
+</div>
