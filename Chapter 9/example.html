@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<!-- ng-app applies the module to the HTML document. -->
+<html ng-app="exampleApp">
+<head>
+    <title>AngularJS Demo</title>
+	<link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script src="script/vendor/angular.min.js"></script>
+    <script src="script/filter/filter.js"></script>
+    <script src="script/controller/controller.js"></script>
+
+    <script>
+        // Modules are the top-level components for angularJS applications 
+        /* Modules have three main roles: 
+        - To associate an AngularJS application with a region of an HTML document
+        - To act as a gateway to key AngularJS framework features
+        - To help organize the code and components in an AngularJS application */
+
+        /* the three arguments accepted but the angular.module method are:
+        - name (in this case myApp) is the name of the new module (the naming convention is to use the suffix App)
+        - requires is the set of modules that the module depends on
+        - config which is the configuration for the module, equivalent to calling the Module.config method */
+
+        /* When creating a module you must specify the name and requires arguments, even if your module has no dependencies.  
+        an example of that would be - var myApp = angular.module("exampleApp");
+        The effect of doing this way is that angular tries to find a previously created module called exampleApp, instead of creating a new one. */
+
+        var myApp = angular.module("exampleApp", ["exampleApp.Controllers", "exampleApp.Filters", "exampleApp.Services", "exampleApp.Directives"]);
+
+        // constant(key, value) - Defines a service that returns a constant value
+        myApp.constant("startTime", new Date().toLocaleTimeString());
+        // config(callback) -  Registers a function that can be used to configure a module when it is loaded
+        myApp.config(function (startTime) {
+            console.log("Main Module config: " + startTime);
+        });
+        myApp.run(function (startTime) {
+            console.log("Main module run: " + startTime);
+        })
+
+        // directive(name, factory) - Creates a directive which extends the standard HTML vocabulary
+
+        // A $filter argument is added to the directive factory function, which tells angularJS that the filter service object needs to be called with this function. 
+        // $filter service gives us access to all of the filters that have been defined, including the custom filter listed below. 
+        angular.module("exampleApp.Directives", []).directive("highlight", function ($filter) {
+            var dayFilter = $filter("dayName");
+            // factory (name, provider) - Creates a service. 
+
+            /* All Module methods that create building blocks accept functions as arguments.  There are called factory functions, 
+            they are responsible for creating the object that angularJS will employ to perform the work itself. 
+            Often, factory functions will return a worker function.  In the example below the return statement in the factory function returns another function, which will invoke each time
+            it needs to apply the directive, and this is the worker function. */
+            return function (scope, element, attrs) {
+                // scope is passed not $scope.  the scope argument inspects the data that is available in the view
+                // the attrs argument provides the complete set of the attributes that have been applied to the element, including the attribute that applies the directive. 
+                // The element attribute is a jqLite object (jqLite is a cut down version of jQuery that is included with angular. 
+                /* if (scope.day == attrs["highlight"]) {
+                    element.css("color", "red");
+                } */
+                if (dayFilter(scope.day) == attrs["highlight"]) {
+                    element.css("color", "red");
+                }
+            }
+        });
+        
+        // Service(name, constructor) - creates a service
+        /*  Services are singleton objects that provide any function that you want to use throughout an application.  There are some useful build-in services that come with angularJS for common tasks
+        such as making HTTP Requests */
+        // Singleton means that only one instance of the object will be created by AngularJS and shared between that parts of the application that need the service.
+        // Three of the methods defined by the module object are used to create services in different ways: services, factory, and provider.  
+
+        //even through the service method is called after the controllers, the controllers are still able to use it.  That is because angulatJS will ensure that everything is setup correctly. 
+
+        // The Module.value method lets you create services that return fixed values and objects.  This means that you can use DI for any object of value, not just the ones created using methods like service and filters 
+
+        // While setting up service this way works the second method is better for testing and the recommended 
+        /* var now = new Date();
+
+        myApp.service("days", function () {
+            this.today = now.getDay();
+            this.tomorrow = this.today + 1;
+        }); */
+      
+        var now = new Date();
+        // value(name, value) - Defines a service that returns a constant value
+        myApp.value("nowValue", now);
+
+        angular.module("exampleApp.Services", [])
+            .service("days", function (nowValue) {
+            this.today = nowValue.getDay();
+            this.tomorrow = this.today + 1;
+            })
+
+        .config(function(){
+            console.log("Services module config: (no time)");
+        })
+            // run(callback) - Registers a function that is invoked after AngularJS has loaded and configures all of the modules.  
+        .run(function (startTime){
+            console.log("Services module run: " + startTime);
+        })
+    </script>
+</head>
+<body>
+    <!-- Controllers must be applied to HTML elements so that angularJS knows which part of an HTML document forms the view for a given controller -->
+    <!-- in this example the view would be what is in-between the div's -->
+    <!--<div class="panel" ng-controller="dayCtrl">-->
+    <div class="panel">
+        <div class="page-header">
+            <h3>AngularJS App</h3>
+        </div>
+        <!-- || JavaScript operator that means otherwise -->
+        <!-- placing the ng-controller like this creates two simple views side-by-side in the HTML document -->
+        <!-- The custom directive is highlight.  It is applied as an attribute (there are other ways to apply it).
+            The directive method is passes three three arguments: the scope for the view, the element to which the directive has been applied, and the attributes of that element -->
+        <!--  Applying filters -->
+        <h4 ng-controller="dayCtrl" highlight="Thursday">Today is {{day || "(unknown)" | dayName }}</h4>
+        <!-- <h4 ng-controller="dayCtrl">Tomorrow is {{tomorrow || "(unknown)" }}</h4> -->
+        <h4 ng-controller="tomorrowCtrl">Tomorrow is {{day || "(unknown)" | dayName }}</h4>
+    </div>
+</body>
+</html>
