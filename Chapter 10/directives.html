@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Directives</title>
+    <meta charset="utf-8" />
+    <script src="script/vendor/angular.js"></script>
+    <link href="style/vendor/bootstrap-theme.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        angular.module("exampleApp", [])
+        .controller("defaultCtrl", function ($scope) {
+            $scope.data = {};
+
+            $scope.todos = [
+                { action: "Get groceries", complete: false },
+                { action: "Call plumber", complete: false },
+                { action: "Buy running shoes", complete: true },
+                { action: "Buy flowers", complete: false },
+                { action: "Call family", complete: false }
+            ];
+
+            $scope.viewFile = function () {
+                return $scope.showList ? "partial/list.html" : "partial/table.html";
+            }
+
+            $scope.reportChange = function () {
+                console.log("Display content: " + $scope.viewFile());
+            }
+        })
+    </script>
+    <style>
+        .odd {
+            background-color: lightcoral;
+        }
+
+        .even {
+            background-color: lavenderblush;
+        }
+    </style>
+</head>
+<body>
+    <!-- remove display none to see table -->
+    <div id="todoPanel" class="panel" ng-controller="defaultCtrl" style="display:none;">
+        <h3 class="page-header">To Do List</h3>
+        <!-- One-way data binding -->
+        <div>There are {{ todos.length }} items</div>
+        <div>
+            <!-- ng-bind; applied as an attribute or class; Binds the innerText property of an HTML element -->
+            <!-- ng-bind-html; applied as attribute or class; Creates data bindings using the innerHTML property
+            of an HTML element.  This is potentially dangerous because it means that the browser will interpret the content as HTML, rather than content -->
+            There are <span ng-bind="todos.length"></span> items
+        </div>
+        <!-- ng-bing-template; applies as attribute or class; Similar to the ng-bind directive but allows for multiple template expressions to be specified in the attribute value -->
+        <div ng-bind-template="First: {{todos[0].action}}.  Second: {{todos[1].action}}">></div>
+        <!-- ng-non-bindable; applied as attribute or class; Declares a region of the content for which data binding will not be performed -->
+        <div ng-non-bindable>
+            AngularJS uses {{ and }} characters for templates
+        </div>
+        <br />
+        <!-- Two-way data binding -->
+        <div class="well">
+            <div>The first item is: {{todos[5].action}}</div>
+        </div>
+        <div class="form-group well">
+            <label for="firstItem">Set First Item:</label>
+            <!-- ng-model; applied as attribute or class; Creates a two-way data binding -->
+            <input name="firstItem" class="form-control" ng-model="todos[5].action" />
+        </div>
+    </div>
+    <div id="todoPanel" class="panel" ng-controller="defaultCtrl">
+        <h3 class="page-header">To Do List</h3>
+        <!-- ng-include; applies as element, attribute, and class; Loads, processes, and inserts a fragment of HTML into the Document Object Model -->
+        <!-- always include a closing tag (never do <ng-include src="" />) -->
+        <!-- ng-include accepts 3 parameters:
+            - Src (specifies teh URL of the content to load)
+            - onload (specifies an expression to be evaluates when the content is loaded)
+            - autoscroll (specifies whether AngularJS should scroll the viewport when the content in loaded) -->
+        <!--<ng-include src="'partial/table.html'"></ng-include>-->
+        <!-- Partial Views 
+        <div class="well">
+            <div class="checkbox">
+                <label>
+                <input type="checkbox" ng-model="showList">
+                    Use the list view
+                </label>
+            </div>
+        </div>-->
+        <!--<ng-include src="viewFile()"></ng-include>-->
+        <!-- this example adds the ng-include as an attribute. 
+        <ng-include src="viewFile()" onload="reportChange()"></ng-include>-->
+
+        <!-- ng-switch; applies as element or attribute;  Changes the elements in the Document Object Model based on the value of data bindings -->
+        <!-- ng-cloak; applies as attribute or class; Applies a CSS style that hides inline binding expressions, which can be briefly visible when the document first loads -->
+        <div class="well">
+            <div class="radio" ng-repeat="button in ['None', 'Table', 'List']">
+                <label ng-cloak>
+                    <input type="radio" ng-model="data.mode" value="{{button}}" ng-checked="$first" />
+                    {{button}}
+                </label>
+            </div>
+        </div>
+        <div ng-switch on="data.mode">
+            <div ng-switch-when="Table">
+                <table class="table">
+                    <thead>
+                        <tr><th>#</th><th>Action</th><th>Done</th></tr>
+                    </thead>
+                    <tr ng-repeat="item in todos" ng-class="$odd ? 'odd' : 'even'">
+                        <td>{{$index + 1}}</td>
+                        <td ng-repeat="prop in item">{{prop}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-switch-when="List">
+                <ol>
+                    <li ng-repeat="item in todos" ng-cloak>
+                        {{item.action}}<span ng-if="item.complete"> (Done)</span>
+                    </li>
+                </ol>
+            </div>
+            <div ng-switch-default>
+                Select another option to display a layout
+            </div>
+        </div>
+    </div>
+</body>
+</html>

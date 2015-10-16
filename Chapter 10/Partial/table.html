@@ -1,0 +1,59 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Action</th>
+            <th>Done</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- ng-repeat; applied as Attribute or class; Generates new copies of a single element and its contents for each object in an array or property on an object
+        <tr ng-repeat="item in todos">
+            <td>{{item.action}}</td>
+            <td>{{item.complete}}</td>
+        </tr>-->
+        <!-- Nested ng-repeat directives
+        <tr ng-repeat="item in todos">
+            <td ng-repeat="prop in item">{{prop}}</td>
+        </tr>-->
+        <!-- Receiving a key along with a data value
+        <tr ng-repeat="item in todos">
+            <td ng-repeat="(key, value) in item">{{key}} = {{value}}</td>
+        </tr>
+        <tr ng-repeat="item in todos" class="ng-scope">
+            <td ng-repeat="(key, value) in item" class="ng-scope ng-binding">
+                action=Get groceries
+            </td>
+            <td ng-repeat="(key, value) in item" class="ng-scope ng-binding">
+                complete=false
+            </td>
+        </tr>-->
+        <!-- $odd - Returns true for the odd-numbered objects in a collection -->
+        <!-- $even - Returns true for the even-numbered objects in a collection -->
+        <!-- $first - Returns true if the current object is the first in the collection -->
+        <!-- $middle - Returns true if the current object is neither the first nor last in the collection -->
+        <!-- $last - Returns true if the current object is the last in the collection -->
+        <!-- $index - Returns the position of the current object or property -->
+        <!-- Working with built-in variables -->
+         <tr ng-repeat="item in todos" ng-class="$odd ? 'odd' : 'even'">
+             <td>{{$index +1}}</td>
+             <td ng-repeat="prop in item">
+                 {{prop}}
+             </td>
+             <!--<td>{{item.action}}</td>
+             <td><span ng-if="$first || $last">{{item.complete}}</span></td>-->
+         </tr>
+        <!-- ng-repeat-start; applied as an attribute, class; generates new copies of a single element and its contents for each object in an array of property on an object -->
+        <!-- ng-repeat-stop; applied as an attribute or class; Denotes the end of a repeating section with multiple top-level elements. -->
+        <!-- Repeating Multiple Top-level elements 
+        <tr ng-repeat-start="item in todos">
+            <td>This is item {{$index}}</td>
+        </tr>
+        <tr>
+            <td>The action is: {{item.action}}</td>
+        </tr>
+        <tr ng-repeat-end>
+            <td>Item {{$index}} is {{$item.complete? '' : "not "}} complete</td>
+        </tr>-->
+    </tbody>
+</table>
