@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Directives</title>
+    <meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        angular.module("exampleApp", [])
+        .controller("defaultCtrl", function ($scope) {
+
+            $scope.todos = [
+                { action: "Get groceries", complete: false },
+                { action: "Call plumber", complete: false },
+                { action: "Buy running shoes", complete: true },
+                { action: "Buy flowers", complete: false },
+                { action: "Call family", complete: false }
+            ];
+
+            $scope.buttonNames = ["Red", "Green", "Blue"];
+
+            /* $scope.settings = {
+                 Rows: "Red",
+                 Columns: "Green"
+             }; */
+
+            $scope.data = {
+                rowColor: "Blue",
+                columnColor: "Green"
+            };
+
+            $scope.handleEvent = function (e) {
+                console.log("Event type: " + e.type);
+                $scope.data.columnColor = e.type == "mouseover" ? "Green" : "Blue";
+            }
+
+            $scope.dataValue = false;
+
+        });
+
+        /*
+        angular.module("exampleApp", [])
+        .controller("defaultCtrl", function ($scope, $location) {
+    $scope.message = "Tap Me!";
+}).directive("tap", function () {
+    return function (scope, elem, attrs) {
+        // works toucheble directive
+        elem.on("touchstart touchend", function () {
+            scope.$apply(attrs["tap"]);
+        });
+    }
+}); 
+*/
+
+
+    </script>
+    <style>
+        /* td > *:first-child {
+            font-weight: bold;
+        }*/
+
+        tr.Red {
+            background-color: lightcoral;
+        }
+
+        tr.Green {
+            background-color: lightgreen;
+        }
+
+        tr.Blue {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <div id="todoPanel" class="panel" ng-controller="defaultCtrl">
+
+        <div class="checkbox well">
+            <label>
+                <input type="checkbox" ng-model="dataValue" >
+                Set the Data Value
+            </label>
+        </div>
+
+        <button class="btn btn-success" ng-disabled="dataValue">My Button</button>
+
+        <!--<div class="well" tap="message = 'Tapped!'">
+            {{message}}
+        </div>-->
+
+        <h3 class="panel-header">To Do List</h3>
+
+        <!--<div class="checkbox well">
+            <label>
+                <input type="checkbox" ng-model="todos[2].complete" />
+                Item 3 is complete
+            </label>
+        </div>-->
+        <!--<div class="row well">
+            <div class="col-xs-6" ng-repeat="(key, val) in settings">
+                <h4>{{key}}</h4>
+                <div class="radio" ng-repeat="button in buttonNames">
+                    <label>
+                        <input type="radio" ng-model="settings[key]" value="{{button}}" />
+                        {{button}}
+                    </label>
+                </div>
+            </div>
+        </div>-->
+
+        <div class="row well">
+            <span ng-repeat="button in buttonNames">
+                <button class="btn btn-info" ng-click="data.rowColor = button">
+                    {{button}}
+                </button>
+            </span>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr><th>#</th><th>Action</th><th>Done</th></tr>
+            </thead>
+            <!-- ng-class; Applied as attribute or class; Sets the class attribute for an element
+            <tr ng-repeat="item in todos" ng-class="settings.Rows">-->
+            <!-- ng-class-even; Applied as attribute or class; Sets the class attribute for even-numbered elements generated within the ng-repeat directive -->
+            <!-- ng-class-odd; Applied as attribute or class; Sets the class attribute for odd-numbered elements generated within the ng-repeat directive
+            <tr ng-repeat="item in todos" ng-class-even="settings.Rows" ng-class-odd="settings.Columns">-->
+            <tr ng-repeat="item in todos" ng-class="data.rowColor" ng-mouseenter="handleEvent($event)" ng-mouseleave="handleEvent($event)">
+                <td>{{$index + 1}}</td>
+                <td>{{item.action}}</td>
+                <td ng-class="data.columnColor">{{item.complete}}</td>
+
+                <!--  ng-hide; applies as attribute or class; Shows and hides elements in the DOM -->
+                <!--  ng-show; applies as attribute or class; Shows and hides elements in the DOM -->
+                <!-- one limitation is that the directives leave the elements they manage in the DOM and just hide them from the user.
+                This means that position-based css selectors like *:first-child will count the hidden elements.  In this situation use ng-if directive instead.-->
+                <!-- Both ng-repeat and ng-if directives rely on a technique called transclusion, which means that both directives want to modify the child elements,
+                and angularJS doesn't know how to allow both to do so. -->
+                <!-- <td>
+                    <span ng-hide="item.complete">(Incomplete)</span>
+                    <span ng-show="item.complete">(Done)</span>
+                </td> -->
+                <!-- ng-if; Applied as attribute; Adds and removes elements from the DOM
+                <td>
+                    <span ng-if="!item.complete">(Incomplete)</span>
+                    <span ng-if="item.complete">(Done)</span>
+                </td>-->
+                <!-- ng-style; applied as attribute or class;  Sets one or more css properties
+                <td ng-style="{'background-color': settings.Columns}">
+                    {{item.complete}}
+                </td>-->
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>
