@@ -156,6 +156,28 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Chapter 11", "Chapter 11\",
 		DefaultWebSiteLanguage = "Visual C#"
 	EndProjectSection
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Chapter 12", "Chapter 12\", "{B6849126-2A5F-434B-B50C-98C1DBA9ADCF}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5.2"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_57825"
+		Debug.AspNetCompiler.PhysicalPath = "Chapter 12\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57825\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_57825"
+		Release.AspNetCompiler.PhysicalPath = "Chapter 12\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57825\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "57825"
+		SlnRelativePath = "Chapter 12\"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,6 +198,8 @@ Global
 		{41836DB1-19F8-47A5-A1E5-7AC1D891AE8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DABB6E01-451C-41DD-B207-6CE2E1629571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DABB6E01-451C-41DD-B207-6CE2E1629571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6849126-2A5F-434B-B50C-98C1DBA9ADCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6849126-2A5F-434B-B50C-98C1DBA9ADCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
