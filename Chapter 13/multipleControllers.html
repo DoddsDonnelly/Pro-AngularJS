@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Forms</title>
+    <meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        var app = angular.module("exampleApp", []);
+
+        app.controller("simpleCtrl", function(){
+            this.dataValue = "Hello, Adam";
+
+            this.reverseText = function () {
+                this.dataValue = this.dataValue.split("").reverse().join("");
+            }
+        });
+
+        app.controller("firstController", function ($scope) {
+            $scope.dataValue = "Hello, Adam";
+
+            $scope.reverseText = function () {
+                $scope.dataValue = $scope.dataValue.split("").reverse().join("");
+            }
+        });
+
+        app.controller("secondController", function ($scope) {
+            $scope.dataValue = "Hello, Jacqui";
+
+            $scope.changeCase = function () {
+                $scope.dataValue = $scope.dataValue.toUpperCase();
+            }
+        });
+    </script>
+</head>
+<body>
+    <!--  Scope-less Controllers-->
+    <div class="well" ng-controller="simpleCtrl as ctrl">
+        <h4>Top Level Controller</h4>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="ctrl.reverseText()">Reverse</button>
+            </span>
+            <input class="form-control" ng-model="ctrl.dataValue">
+        </div>
+        </div>
+
+        <!-- each element has it's own controller, they operate independently and don't share scopes or inherit data or behaviors.  -->
+        <div class="well" ng-controller="firstController">
+            <h4>First Controller</h4>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="reverseText()">Reverse</button>
+                </span>
+                <input class="form-control" ng-model="dataValue">
+            </div>
+            </div>
+
+        <div class="well" ng-controller="secondController">
+                <h4>Second Controller</h4>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="changeCase()">Case</button>
+                    </span>
+                    <input class="form-control" ng-model="dataValue">
+                </div>
+            </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Forms</title>
+    <meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+            $('#jqui button').button().click(function (e) {
+                /* 
+                *The $apply method provides the means fr incoming integration so that a change in the other framework causes a corresponding change in angularJS
+                *angular.element method as part of its lightweight implementation of jQuery, and passing the id attribute value of the element I am interested in to this method
+                gives an object that defines a scope. 
+                *The handleClick can not be call directly it must be specified through an expression so that the scope is aware of the change.
+                * we could have angular.element(angularRegion).scope().$apply('clickCounter = clickCounter + 1'); but the other way is preferable it allows the logic that updates 
+                the scope to be kept in one place. 
+                */
+                angular.element(angularRegion).scope().$apply('handleClick()');
+            });
+        });
+
+        var app = angular.module("exampleApp", [])
+        .controller("simpleCtrl", function ($scope) {
+
+            $scope.buttonEnabled = true;
+            $scope.clickCounter = 0;
+
+            $scope.handleClick = function () {
+                $scope.clickCounter++;
+            }
+
+            /* The first argument to the $watch method is an expression, which AngularJS evaluates to figure out what you want to monitor.  
+            This means you can call a function that generates a property name, but it also means that you have to use a string literal 
+            if you want to specify a property name directly.  */
+
+            $scope.$watch('buttonEnabled', function (newValue) {
+                $('#jqui button').button({
+                    disabled: !newValue
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="angularRegion" class="well" ng-controller="simpleCtrl">
+        <h4>AngularJS</h4>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="buttonEnabled" > Enable Button
+            </label>
+        </div>
+        Click counter: {{clickCounter}}
+    </div>
+    <div id="jqui" class="well">
+        <h4>JQuery UI</h4>
+        <button>Click Me!</button>
+    </div>
+</body>
+</html>

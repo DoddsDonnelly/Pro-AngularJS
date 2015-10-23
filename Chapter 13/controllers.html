@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Forms</title>
+    <meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+
+    <script>
+        angular.module("exampleApp", [])
+
+            // Using a service to mediate the scope helps to reduce duplication by putting code that is likely to be required by different controllers in a single location.
+            .service("ZipCodes", function ($rootScope) {
+                return {
+                    setZipCode: function (type, zip) {
+                        this[type] = zip;
+                        $rootScope.$broadcast("zipCodeUpdated", {
+                            type: type, zipCode: zip
+                        });
+                    }
+                }
+            })
+
+            .controller("simpleCtrl", function ($scope, ZipCodes) {
+
+            /* $broadcast(name, args) - Sends an event from the current scope down to all of the child scopes.
+            The arguments are the name of the event and an object used to provide supplementary data with the event */
+            // $emit(name, args) - Sends an event from the current scope up to the root scope.
+            // $on(name, handler) - Registers a handler function that is invoked when the specified event is received by the scope
+
+            // $broadcast and $emit events are directional and send an event up through the scope hierarchy until it reaches the
+            // root scope or down through the hierarchy to each of the child scopes.
+
+            /* The name of the $scope property is set to the value of the args.type property from the method argument.  Placing args.type
+            between the [ and ] characters causes the args.type property to be evaluated, and its value is used as the name of the scope property */
+            $scope.$on("zipCodeUpdated", function (event, args) {
+                $scope[args.type] = args.zipCode;
+            })
+
+            $scope.setAddress = function (type, zip) {
+                ZipCodes.setZipCode(type, zip);
+                console.log("Type: " + type + " " + zip);
+            }
+
+            $scope.copyAddress = function () {
+                $scope.zip = $scope.billingZip;
+            }
+
+            /*  For use with the monolithic controller example 1*/
+            $scope.cities = ["London", "New York", "Paris"];
+
+            $scope.city = "London";
+
+            $scope.getCountry = function (city) {
+                switch (city) {
+                    case "London":
+                        return "UK";
+                    case "New York":
+                        return "USA";
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="well" ng-controller="simpleCtrl">
+        <h4>Billing Zip Code</h4>
+        <div class="form-group">
+            <input class="form-control" ng-model="billingZip">
+        </div>
+        <button class="btn btn-primary" ng-click="setAddress('billingZip', billingZip)">
+            Save Billing
+        </button>
+    </div>
+
+    <div class="well" ng-controller="simpleCtrl">
+        <h4>Shipping Zip Code</h4>
+        <div class="form-group">
+            <input class="form-control" ng-model="shippingZip">
+        </div>
+        <button class="btn btn-primary" ng-click="copyAddress()">
+            Use Billing
+        </button>
+        <button class="btn btn-primary" ng-click="setAddress('shippingZip', shippingZip)">
+            Save Shipping
+        </button>
+    </div>
+</body>
+<!-- For use with the monolithic controller example 1
+    Monolithic Controller is where you use one controller that handles ALL data bindings (create one view for the whole project)
+<body ng-controller="simpleCtrl">
+    <div class="well">
+        <label>Select a City:</label>
+        <select ng-options="city for city in cities" ng-model="city"></select>
+    </div>
+    <div class="well">
+        <p>The city is: {{city}}</p>
+        <p>The Country is: {{getCountry(city) || "Unknown"}}</p>
+    </div>
+</body>-->
+</html>
