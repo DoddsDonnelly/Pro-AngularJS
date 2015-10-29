@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>jqLite</title>
+    <meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        angular.module("exampleApp", [])
+        .directive("demoDirective", function () {
+            return function (scope, element, attrs) {
+               
+                /* children() - Returns the set of child elements.  The jgLIte implementation of this method does not support the selectors feature that jQuery provides
+                var items = element.children(); */
+                /* find(tag) Locates all of the descendant elements with the specified tag name.  The jQuery implementation provides additional options for selecting elements,
+                which are not available in the jqLite implementation of this method. */
+                /* Example 1
+
+                var items = element.find("li");
+                // using children and descendants is best as methods search the whole DOM and can select any item even outside of the selected element. This can cause conflict and confusion. 
+                items.css("color", "red");
+                for (var i = 0; i < items.length; i++) {
+                    // eq(index) returns an element at the specified index from a collection of elements.
+                    if (items.eq(i).text() == "Oranges") {
+                        items.eq(i).css("font-weight", "bold");
+                    } else {
+                        items.eq(i).css("font-weight", "normal");
+                    }
+                }
+                console.log("Element count: " + items.length);
+                // this only shows the result of the first item 
+                console.log("Font: " + items.css("font-weight"));
+                */
+
+                var listElem = angular.element("<ol>");
+                element.append(listElem);
+                for (var i = 0; i < scope.names.length; i++) {
+                    // listElem.append("<li>").append("<span>").text(scope.names[i]);
+                    listElem.append(angular.element("<li>").append(angular.element("<span>").text(scope.names[i])));
+                }
+                var buttons = element.find("button");
+                // on(event, handler) registers a handler for one or more events emitted by the element represented by the jqLite object.
+                // The jqLite implementation of the this method does not support the selectors or event data. 
+                buttons.on("click", function(e) {
+                    element.find("li").toggleClass("bold");
+                });
+            }
+        })
+
+        .controller("defaultCtrl", function ($scope) {
+            $scope.names = ["Apples", "Bananas", "Oranges"];
+        })
+    </script>
+    <style>
+        .bold{ font-weight: bold;}
+    </style>
+
+</head>
+<body ng-controller="defaultCtrl">
+    <h3>Fruit</h3>
+    <div demo-directive>
+        <button>CLick Me</button>
+    </div>
+
+    <!--
+        <ol demo-directive>
+            <li>Apples</li>
+            <ul>
+                <li>Bananas</li>
+                <li>Cherries</li>
+                <li>Oranges</li>
+            </ul>
+            <li>Oranges</li>
+            <li>Pears</li>
+        </ol>-->
+</body>
+</html>
