@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Custom Forms</title>
+	<meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        *.error{
+            color: red; 
+            font-weight:bold;
+        }
+    </style>
+    <script type="text/template" id="triTemplate">
+        <div class="well">
+            <div class="btn-group">
+                <button class="btn btn-default">Yes</button>
+                <button class="btn btn-default">No</button>
+                <button class="btn btn-default">Not Sure</button>
+            </div>
+
+            <span class="error" ng-show="myForm.decision.$error.confidence">
+                You need to be sure
+            </span>
+        </div>
+    </script>
+    <script type="text/javascript">
+        angular.module("exampleApp", [])
+            .controller("defaultCtrl", function ($scope) {
+                $scope.dataValue = "Not Sure";
+            })
+        .directive("triButton", function () {
+            return {
+                restrict:"E",
+                replace: true,
+                require: "ngModel",
+                template: document.querySelector("#triTemplate").outerText,
+                link: function (scope, element, attrs, ctrl) {
+                    var validateParser = function (value) {
+                        var valid = (value == "Yes" || value == "No");
+                        ctrl.$setValidity("confidence", valid);
+                        return valid ? value : undefined;
+                    }
+
+                    // doesn't effect change until the value has changed in this case yes or no must be selected then when not sure is selected
+                    // the error shows.  
+                    ctrl.$parsers.push(validateParser);
+
+                    /* $formatters - an array of formatter functions that transform $modelValue into $viewValue 
+                    ctrl.$formatters.push(function (value) {
+                        return value == "Huh?" ? "Not Sure" : value;
+                    });*/
+
+                    // using a click event to effect the change to ng model
+                    element.on("click", function (event) {
+                        setSelected(event.target.innerText);
+                        scope.$apply(function () {
+                            /* $setViewValue(value) updates the data-bound value. */
+                            ctrl.$setViewValue(event.target.innerText);
+                        });
+                    });
+                    var setSelected = function (value) {
+                        var buttons = element.find("button");
+                        buttons.removeClass("btn-primary");
+                        for (var i = 0; i < buttons.length; i++) {
+                            if (buttons.eq(i).text() == value) {
+                                buttons.eq(i).addClass("btn-primary");
+                            }
+                        }
+                    }
+                    /* $render() this is the function that the ng-model controller calls to update the UI when the data-bound value changes.  
+                    It is usually overridden by custom directives.  */
+                    ctrl.$render = function () {
+                        /* $viewValue Returns the formatted value that should be displayed by the directive. */
+                        setSelected(ctrl.$viewValue || "Not Sure");
+
+                        //explicitly calling the error so that is shows on load. (remove this to show error only on change.) 
+                        validateParser(ctrl.$viewValue);
+
+                    }
+                    //setSelected(scope.dataValue);
+                }
+            }
+        })
+    </script>
+</head>
+<body ng-controller="defaultCtrl">
+
+    <form name="myForm" novalidate>
+        <div><tri-button name="decision" ng-model="dataValue" /></div>
+    </form>
+
+    <!--
+        <div><tri-button ng-model="dataValue" /></div>
+        <div class="well">
+        Value:
+        <select ng-model="dataValue">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Not Sure</option>
+            <option>Huh?</option>
+        </select>
+    </div>-->
+</body>
+</html>
