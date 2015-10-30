@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Directive Scopes</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/ng-template" id="scopeTemplate">
+        <div class="panel-body">
+            <!--data.name - this property is defined on an object, which means a single value will be shared between instances of the directive
+                and all of the input elements bound to this property will be kept in sync.
+            <p>Name: <input ng-model="data.name" /></p>-->
+            <!-- city - this property is assigned a value directly on the controller's scope, which means that all of the directives scopes will start with the same value but
+                 will create and modify their own version in their own scopes when the input element is modified.
+            <p>City: <input ng-model="city" /></p>-->
+            <!-- country - this property is assigned a value. Each instance of the directive will create separate country properties when the corresponding
+            input element is modified.
+            <p>Country: <input ng-model="country" /></p>-->
+            <!--One way binding
+                <p>Data Value: {{local}}</p>-->
+            <!--Two-way binding
+            <p>Data Value: <input ng-model="local" /></p>-->
+            <div class="panel-body">
+                <p>Name: {{local}}, City: {{cityFn()}}</p>
+            </div>
+        </div>
+    </script>
+    <script type="text/javascript">
+        angular.module("exampleApp", [])
+        .directive("scopeDemo", function () {
+            return {
+                //template: "<div class='panel-body'>Name: <input ng-model=name /></div>",
+                template: function () {
+                    return angular.element(
+                        document.querySelector('#scopeTemplate')).html();
+                },
+                /* scope creates a new scope or an isolated scope for the directive. */
+                //scope: true
+                scope: {
+                    local: "=nameprop",
+                    cityFn:"&city"
+                }
+            }
+        }).controller("scopeCtrl", function ($scope) {
+            $scope.data = { 
+                name: "Adam",
+                defaultCity: "London"
+        };
+            $scope.getCity = function (name) {
+                return name == "Adam" ? $scope.data.defaultCity : "Unknown";
+            }
+        })/*
+        the secondCtrl function can be removed if the directive has scope set to true
+        .controller("secondCtrl", function ($scope) {
+            // do nothing - no behaviors required
+        })*/
+    </script>
+</head>
+<body>
+    <div ng-controller="scopeCtrl" class="panel panel-default">
+        <div class="panel-body">
+            Direct Binding: <input ng-model="data.name" />
+        </div>
+        <div class="panel-body" scope-demo city="getCity(data.name)" nameprop="data.name"></div>
+        <!--<div class="panel-body" scope-demo nameprop="{{data.name + ' Freeman'}}"></div>-->
+        <!--<div class="panel-body" ng-controller="scopeCtrl" scope-demo></div>
+        <div class="panel-body" ng-controller="secondCtrl" scope-demo></div>-->
+    </div>
+</body>
+</html>

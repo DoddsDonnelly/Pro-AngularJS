@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Directives</title>
+	<meta charset="utf-8" />
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/template" id="listTemplate">
+    <ul>
+        <li ng-repeat="item in data">{{item.price | currency}}</li>
+    </ul>
+    </script>
+    <script>
+        angular.module("exampleApp", [])
+            .directive("unorderedList", function () {
+                return {
+                    // Link - Specifies the link function for the directive. 
+                    link: function (scope, element, attrs) {
+                        scope.data = scope[attrs["unorderedList"]];
+
+                        /*var data = scope[attrs["unorderedList"] || attrs["listSource"]];
+                        var propertyExpression = attrs["listProperty"] || "price | currency";
+                        if (angular.isArray(data)) {
+                            var listElem = angular.element("<ul>");
+                            if (element[0].nodeName == "#comment"){
+                                element.parent().append(listElem);
+                            } else{
+                                element.append(listElem);
+                            }
+                            for (var i = 0; i < data.length; i++) {
+                                var itemElement = angular.element('<li>').text(scope.$eval(propertyExpression, data[i]));
+                                listElem.append(itemElement);
+                            }
+                        }*/
+                    },
+                    /*restrict - specifies how the directive can be applied. Can be defined in four ways:
+                    E - allows the directive to be applied as an element 
+                    A - allows the directive to be applied as an attribute
+                    C - allows the directive to be applied as a class
+                    M - allows the directive to be applied as a comment 
+                    restrict: "EACM"  can be combined*/
+                    restrict: "A",
+                    /* Template - specifies a template that will be inserted into the HTML document. 
+                    template:"<ul><li ng-repeat='item in data'>" + "{{item.price | currency}}</li></ul>" */
+                    /* using function as a template-  
+                    template: function () {
+                        return angular.element(
+                            document.querySelector('#listTemplate')).html();
+                    }*/
+                    /* templateUrl - Specifies an external template that will be inserted into the HTML document.
+                    templateUrl: "templates/itemTemplate.html"*/
+                    /*templateUrl: function (elem, attrs) {
+                        return attrs["template"] == "table" ? "templates/tableTemplate.html" : "templates/itemTemplate.html";
+                    }*/
+                    templateUrl: "templates/tableTemplate.html",
+                    /* replace - specifies whether the contents of the template replace the element that the directive has been applied to */
+                    replace: true
+                }
+            }).controller("defaultCtrl", function ($scope) {
+            $scope.products = [
+                { name: "Apples", category: "Fruit", price: 1.20, expiry: 10 },
+                { name: "Bananas", category: "Fruit", price: 2.42, expiry: 7 },
+                { name: "Pears", category: "Fruit", price: 2.02, expiry: 6 },
+            ];
+
+        })
+    </script>
+</head>
+<body ng-controller="defaultCtrl">
+    <div class="panel panel-heading">
+        <h3>Products</h3>
+    </div>
+    <div class="panel-body">
+        <!--Directive applied as an element 
+        <unordered-list list-source="products" list-property="price | currency" />-->
+        <!--Directive applied as an attribute 
+        <div unordered-list="products" list-property="price | currency"></div>-->
+        <!--Directive applied as a class
+        <div class="unordered-list:products" list-property="price | currency"></div>-->
+        <!--Directive applied as a class (avoid at all costs)-->
+        <!-- .. directive: unordered-list products -->
+        <!--<div unordered-list="products" list-property="price | currency"></div>-->
+        <!--<div unordered-list="products" template="table">
+            This is where the list will go
+        </div>-->
+        <div unordered-list="products" class="table table-striped" ng-repeat="count in [1, 2, 3]">
+            This is where the list will go
+        </div>
+    </div>
+</body>
+</html>
