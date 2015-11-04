@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Exceptions</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript">
+        angular.module("exampleApp", ["ngSanitize"])
+          /*// Working with exceptions
+        .controller("defaultCtrl", function ($scope) {
+            $scope.throwEx = function () {
+                throw new Error("Triggered Exception");
+            }
+        });*/
+
+            // Working directly with exceptions
+        .controller("defaultCtrl", function ($scope, $exceptionHandler) {
+            $scope.throwEx = function () {
+                try{
+                    throw new Error("Triggered Exception");
+                } catch (ex) {
+                    $exceptionHandler(ex.message, "Button Click")
+                }
+            }
+        })
+        .factory("$exceptionHandler", function ($log) {
+            return function (exception, cause) {
+                $log.error("Message: " + exception.message + " (Cause: " + cause + ")");
+            }
+        })
+    </script>
+</head>
+<body ng-controller="defaultCtrl">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <button class="btn btn-primary" ng-click="throwEx()">Throw Exception</button>
+        </div>
+    </div>
+</body>
+</html>

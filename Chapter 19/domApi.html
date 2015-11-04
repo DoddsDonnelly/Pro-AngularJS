@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>DOM API Services</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript">
+        angular.module("exampleApp", [])
+            //$window provides a reference to the DOM window object
+            .controller("windowCtrl", function ($scope, $window) {
+                $scope.displayAlert = function (msg) {
+                    $window.alert(msg);
+                }
+            })
+
+            //$document provides a jqLite object that contains the DOM window.document object
+            .controller("documentCtrl", function ($scope, $window, $document) {
+                $document.find("button").on("click", function (event) {
+                    $window.alert(event.target.innerText);
+                });
+            })
+
+        //$interval provides an enhanced wrapper around the window.setInterval function
+        .controller("intervalCtrl", function ($scope, $interval) {
+            $interval(function () {
+                $scope.time = new Date().toTimeString();
+            }, 2000);
+        })
+
+            // this enables the HTML5 history API which only works in modern browsers (since this feature is new make sure to full test before use). 
+            .config(function ($locationProvider) {
+                if (window.history && history.pushState){
+                    $locationProvider.html5Mode({
+                            enabled: true,
+                            requireBase: false
+                        });
+
+                }
+            })
+
+        //$location provides access to the url
+                .controller("locationCtrl", function ($scope, $location) {
+                    $scope.$on("$locationChangeSuccess", function (event, newUrl) {
+                        $scope.url = newUrl;
+                    });
+
+                    $scope.setUrl = function (component) {
+                        switch (component) {
+                            case "reset":
+                                $location.path("");
+                                $location.hash("");
+                                $location.search("");
+                                break;
+                            case "path":
+                                $location.path("/cities/london");
+                                break;
+                            case "hash":
+                                $location.hash("north");
+                                break;
+                            case "search":
+                                $location.search("select", "hotels");
+                                break;
+                            case "url":
+                                $location.url("/cities/london?select=hotels#north");
+                                break;
+                        }
+                    }
+                })
+
+            // this disables anchor scrolling
+            .config(function ($anchorScrollProvider) {
+                $anchorScrollProvider.disableAutoScrolling();
+            })
+        // $anchorScroll - scrolls the browser window to a specified anchor
+        .controller("anchorScrollCtrl", function ($scope, $location, $anchorScroll) {
+            $scope.itemCount = 50;
+            $scope.items = [];
+
+            for (var i = 0; i < $scope.itemCount; i++) {
+                $scope.items[i] = "Items " + i;
+            }
+
+            $scope.show = function (id) {
+                $location.hash(id);
+               if (id == "bottom") {
+                    $anchorScroll();
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="well" ng-controller="windowCtrl">
+        <button class="btn btn-primary" ng-click="displayAlert('Clicked!')">Click Me ($window)</button>
+    </div>
+    <div class="well" ng-controller="documentCtrl">
+        <button class="btn btn-primary" ng-click="displayAlert('Clicked!')">Click Me ($document)</button>
+    </div>
+        <div ng-controller="intervalCtrl" class="panel panel-default">
+            <h4 class="panel-heading">Time ($interval)</h4>
+            <div class="panel-body">
+                The time is {{time}}
+            </div>
+        </div>
+        <div ng-controller="locationCtrl" class="panel panel-default">
+            <h4 class="panel-heading">URL ($location)</h4>
+            <div class="btn-group">
+                <button class="btn btn-primary" ng-click="setUrl('reset')">Reset</button>
+                <button class="btn btn-primary" ng-click="setUrl('path')">Path</button>
+                <button class="btn btn-primary" ng-click="setUrl('hash')">Hash</button>
+                <button class="btn btn-primary" ng-click="setUrl('search')">Search</button>
+                <button class="btn btn-primary" ng-click="setUrl('url')">URL</button>
+            </div>
+        </div>
+        <div ng-controller="anchorScrollCtrl" class="panel panel-default">
+            <h4 class="panel-heading">URL ($anchorScroll)</h4>
+            <div class="panel-body">
+                <p id="top">This is the top</p>
+                <button class="btn btn-primary" ng-click="show('bottom')">
+                    Go to Bottom
+                </button>
+                <p>
+                    <ul>
+                        <li ng-repeat="item in items">{{item}}</li>
+                    </ul>
+                </p>
+                <p id="bottom">This is the bottom</p>
+                <button class="btn btn-primary" ng-click="show('top')">Go to Top</button>
+            </div>
+        </div>
+</body>
+</html>

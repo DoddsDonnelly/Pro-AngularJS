@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Expressions</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript">
+        angular.module("exampleApp", [])
+
+            .controller("defaultCtrl", function ($scope) {
+                $scope.cities = ["London", "Paris", "New York"];
+            })
+            //$compile converts an HTML fragment that contains binding and directives into a function invoked to generate content
+                .directive("evalExpression", function ($compile) {
+                    return function (scope, element, attrs) {
+                        var content = "<ul><li ng-repeat='city in cities'>{{city}}</li></ul>"
+                        var listElem = angular.element(content);
+                        var compileFn = $compile(listElem);
+                        compileFn(scope);
+                        element.append(listElem);
+                    }
+                });
+
+        /*
+        // Converting expressions into functions
+        .controller("defaultCtrl", function ($scope) {
+            $scope.price = "100.23"
+        })
+            //$parse Converts AngularJS expressions into functions that can be invoked to generate content
+        .directive("evalExpression", function ($parse) {
+            return function (scope, element, attrs) {
+                scope.$watch(attrs["evalExpression"], function (newValue) {
+                    try {
+                        var expressionFn = $parse(scope.expr);
+                        var result = expressionFn(scope);
+                        if (result == undefined) {
+                            result = "No result";
+                        }
+                    } catch (err) {
+                        result = "Cannot evaluate expression";
+                    }
+                    element.text(result);
+                });
+            }
+        });
+        */
+
+        /*    //Providing local Data
+        .controller("defaultCtrl", function ($scope) {
+            $scope.dataValue = "100.23"
+        })  
+            
+        .directive("evalExpression", function ($parse) {
+            //$parse Converts AngularJS expressions into functions that can be invoked to generate content
+            var expressionFn = $parse("total | currency");
+            */
+            
+        /*
+        //Providing local Data
+        .controller("defaultCtrl", function ($scope) {
+            $scope.dataValue = "100.23"
+        }) 
+
+                 //Changes the {{ }} to avoid conflicts with other library when needed 
+           .config(function ($interpolateProvider) {
+               //startSymbol(symbol) Replaces the start symbol, which is {{ by default
+               $interpolateProvider.startSymbol("!!");
+               //endSymbol (symbol) Replaces the end symbol, which is }} by default
+               $interpolateProvider.endSymbol("!!");
+           })
+        
+        .directive("evalExpression", function ($interpolate) {
+            //$interpolate converts a string that contains inline bindings into a function that can be invoked to generate content
+                //var interpolationFn = $interpolate("The total is: {{amount | currency }} (including tax)");
+                var interpolationFn = $interpolate("The total is: !!amount | currency!! (including tax)");
+
+            return {
+                scope: {
+                    amount: "=amount",
+                    tax: "=tax"
+                },
+                link: function (scope, element, attrs) {
+                    scope.$watch("amount", function (newValue) {
+                        var localData = {
+                            total: Number(newValue) + (Number(newValue) * (Number(scope.tax) / 100))
+                        }
+                        //element.text(expressionFn(scope, localData));
+                        element.text(interpolationFn(scope));
+                    });
+                }
+            }
+        });*/
+    </script>
+</head>
+<body ng-controller="defaultCtrl">
+    <div class="well">
+        <!--<p><input class="form-control" ng-model="expr" /></p>
+        <div>
+            Result: <span eval-expression="expr"></span>
+        </div>-->
+
+        <!--<p><input class="form-control" ng-model="dataValue" /></p>
+        <div>
+            Result: <span eval-expression amount="dataValue" tax="10"></span>
+        </div>-->
+
+        <!--<p><input class="form-control" ng-model="dataValue" /></p>
+        <div>
+            <span eval-expression amount="dataValue" tax="10"></span>
+            <p>Original amount: !!dataValue!!</p>
+        </div>-->
+
+        <span eval-expression></span>
+    </div>
+</body>
+</html>
