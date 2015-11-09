@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+    <title>Components</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <script src="script/vendor/angular.min.js"></script>
+    <link href="style/vendor/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="style/vendor/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        angular.module("exampleApp", [])
+            // $provider example
+            .config(function ($provide) {
+                $provide.decorator("$log", function ($delegate) {
+                    $delegate.orginalLog = $delegate.log;
+                    $delegate.log = function (message) {
+                        $delegate.orginalLog("Decorated: " + message);
+                    }
+                    return $delegate;
+                })
+            })
+        .controller("providerCtrl", function ($scope, $log) {
+            $scope.handleClick = function () {
+                $log.log("Button Clicked");
+            };
+        })
+
+            // $injector example
+        .controller("injectionCtrl", function ($scope, $injector) {
+            var counter = 0;
+
+            var logClick = function ($log, $exceptionHandler, message) {
+                if (counter == 0) {
+                    $log.log(message);
+                    counter++;
+                } else {
+                    $exceptionHandler("Already clicked");
+                }
+            }
+
+            $scope.handleClick = function () {
+                var deps = $injector.annotate(logClick);
+                for (var i = 0; i < deps.length; i++) {
+                    //console.log("Dependency: " + deps[i]);
+
+                    // filtering functions arguments to find services
+                    if ($injector.has(deps[i])) {
+                        console.log("Dependency: " + deps[i]);
+                    }
+                }
+            };
+        })
+
+        // obtaining service instances
+        .controller("serviceCtrl", function ($scope, $injector) {
+            var counter = 0;
+
+            var logClick = function ($log, $exceptionHandler, message) {
+                if (counter == 0) {
+                    $log.log(message);
+                    counter++;
+                } else {
+                    $exceptionHandler("Already clicked");
+                }
+            }
+
+            $scope.handleClick = function () {
+                var deps = $injector.annotate(logClick);
+                var args = [];
+                for (var i = 0; i < deps.length; i++) {
+                    if ($injector.has(deps[i])) {
+                        args.push($injector.get(deps[i]));
+                    } else if (deps[i] == "message") {
+                        args.push("Button Clicked");
+                    }
+                }
+                logClick.apply(null, args);
+            };
+        })
+
+        // Using invoke
+        .controller("invokeCtrl", function ($scope, $injector) {
+            var counter = 0;
+
+            var logClick = function ($log, $exceptionHandler, message) {
+                if (counter == 0) {
+                    $log.log(message);
+                    counter++;
+                } else {
+                    $exceptionHandler("Already clicked");
+                }
+            }
+
+            $scope.handleClick = function () {
+                var localVars = { message: "Button Clicked" };
+                $injector.invoke(logClick, null, localVars)
+            };
+        })
+
+            // $rootElement Example
+        .controller("rootElementCtrl", function ($scope, $rootElement) {
+            var counter = 0;
+
+            var logClick = function ($log, $exceptionHandler, message) {
+                if (counter == 0) {
+                    $log.log(message);
+                    counter++;
+                } else {
+                    $exceptionHandler("Already clicked");
+                }
+            }
+
+            $scope.handleClick = function () {
+                var localVars = { message: "Button Clicked" };
+                $rootElement.injector().invoke(logClick, null, localVars);
+            };
+        });
+    </script>
+</head>
+<body>
+    <div class="well" ng-controller="providerCtrl">
+        <h4>$provider example</h4>
+        <button class="btn btn-primary" ng-click="handleClick()">Click Me!</button>
+    </div>
+    <div class="well" ng-controller="injectionCtrl">
+        <h4>$injector example</h4>
+        <button class="btn btn-primary" ng-click="handleClick()">Click Me!</button>
+    </div>
+    <div class="well" ng-controller="serviceCtrl">
+        <h4>$injector (service) example</h4>
+        <button class="btn btn-primary" ng-click="handleClick()">Click Me!</button>
+    </div>
+
+    <div class="well" ng-controller="invokeCtrl">
+        <h4>$injector (invoke) example</h4>
+        <button class="btn btn-primary" ng-click="handleClick()">Click Me!</button>
+    </div>
+
+    <div class="well" ng-controller="rootElementCtrl">
+        <h4>$rootElement example</h4>
+        <button class="btn btn-primary" ng-click="handleClick()">Click Me!</button>
+    </div>
+</body>
+</html>
